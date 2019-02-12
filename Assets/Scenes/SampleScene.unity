@@ -285,6 +285,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8069829115145913539, guid: 7f8ee724731f1478e8b345547c4edddf,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 803594193}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f8ee724731f1478e8b345547c4edddf, type: 3}
 --- !u!4 &508285434 stripped
@@ -442,6 +447,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8069829115145913539, guid: 7f8ee724731f1478e8b345547c4edddf,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1718111780}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f8ee724731f1478e8b345547c4edddf, type: 3}
 --- !u!4 &556040140 stripped
@@ -663,14 +673,14 @@ MonoBehaviour:
   actionMultiplier: 0
   crossSkiing: 0
   crossSkiTime: 0
-  crossSkiDuration: 1.5
+  crossSkiDuration: 1
   skiinng: 0
   angle: 0
   lastAngle: 1
   bombing: 0
   stopping: 0
   stopTimer: 0
-  stopTime: 0
+  stopTime: 0.66
   skiSprites:
   - name: CrossHillRight
     sprite: {fileID: 21300008, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
@@ -694,8 +704,13 @@ MonoBehaviour:
     sprite: {fileID: 21300018, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
   - name: Wait
     sprite: {fileID: 21300020, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
---- !u!61 &803594194
-BoxCollider2D:
+  fallTime: 0
+  fallDuration: 1.5
+  fallNum: 0
+  misses: 0
+  finished: 0
+--- !u!70 &803594194
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -708,18 +723,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.8, y: 1.2}
-    newSize: {x: 0.6666667, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.8, y: 1.2}
-  m_EdgeRadius: 0
+  m_Size: {x: 0.6, y: 0.9}
+  m_Direction: 0
 --- !u!50 &803594195
 Rigidbody2D:
   serializedVersion: 4
@@ -733,14 +738,14 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 1000000
+  m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!1 &1086162778
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,7 +790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1346211830}
   - component: {fileID: 1346211831}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: LeftFlags
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -819,11 +824,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d150f913cc89442381ca7e64854fb02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BlueHorizontal: {fileID: 0}
-  BlueVertical: {fileID: 0}
-  RedHorizontal: {fileID: 0}
-  RedVertica: {fileID: 0}
+  player: {fileID: 1718111780}
+  BlueHorizontal: {fileID: 4630844727449934530, guid: 7f8ee724731f1478e8b345547c4edddf,
+    type: 3}
+  BlueVertical: {fileID: 4630844727449934530, guid: dc129524288df4a01be2b0a2b41ed662,
+    type: 3}
+  RedHorizontal: {fileID: 1382831081, guid: 393d55f93654e409d96fb7cefc8bb263, type: 3}
+  RedVertical: {fileID: 1382831081, guid: 48c5e55bccc6d44078104d9843cb767e, type: 3}
+  finish: {fileID: 2029066258001823975, guid: 6ec2fbf4ad14444b7bf04e749a369563, type: 3}
   numberOfGates: 55
+  verticalChance: 0.33
+  firstDistance: 5.67
+  minDistance: 5
+  maxDistance: 8
+  overrideDistance: 5.67
+  verticalDistanceMultiplier: 1.5
 --- !u!1 &1418460442
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,7 +1060,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1640353403}
-  m_Layer: 0
+  - component: {fileID: 1640353404}
+  m_Layer: 11
   m_Name: RightFlags
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1067,6 +1083,33 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1640353404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640353402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d150f913cc89442381ca7e64854fb02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 803594193}
+  BlueHorizontal: {fileID: 4630844727449934530, guid: 7f8ee724731f1478e8b345547c4edddf,
+    type: 3}
+  BlueVertical: {fileID: 4630844727449934530, guid: dc129524288df4a01be2b0a2b41ed662,
+    type: 3}
+  RedHorizontal: {fileID: 1382831081, guid: 393d55f93654e409d96fb7cefc8bb263, type: 3}
+  RedVertical: {fileID: 1382831081, guid: 48c5e55bccc6d44078104d9843cb767e, type: 3}
+  finish: {fileID: 2029066258001823975, guid: 6ec2fbf4ad14444b7bf04e749a369563, type: 3}
+  numberOfGates: 55
+  verticalChance: 0.33
+  firstDistance: 5.67
+  minDistance: 5
+  maxDistance: 8
+  overrideDistance: 5.67
+  verticalDistanceMultiplier: 1.5
 --- !u!1 &1718111777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1174,14 +1217,14 @@ MonoBehaviour:
   actionMultiplier: 0
   crossSkiing: 0
   crossSkiTime: 0
-  crossSkiDuration: 1.5
+  crossSkiDuration: 1
   skiinng: 0
   angle: 0
   lastAngle: 1
   bombing: 0
   stopping: 0
   stopTimer: 0
-  stopTime: 1.5
+  stopTime: 0.66
   skiSprites:
   - name: CrossHillRight
     sprite: {fileID: 21300008, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
@@ -1190,7 +1233,7 @@ MonoBehaviour:
   - name: Fall1
     sprite: {fileID: 21300022, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
   - name: Fall2
-    sprite: {fileID: 21300008, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
+    sprite: {fileID: 21300024, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
   - name: Idle
     sprite: {fileID: 21300004, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
   - name: SkiDown
@@ -1205,6 +1248,11 @@ MonoBehaviour:
     sprite: {fileID: 21300018, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
   - name: Wait
     sprite: {fileID: 21300020, guid: 1938ca7b657a248d59f844df1a7ba61b, type: 3}
+  fallTime: 0
+  fallDuration: 1.5
+  fallNum: 0
+  misses: 0
+  finished: 0
 --- !u!50 &1718111781
 Rigidbody2D:
   serializedVersion: 4
@@ -1218,7 +1266,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 1000000
+  m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -1226,8 +1274,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &1718111782
-BoxCollider2D:
+--- !u!58 &1718111782
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1240,18 +1288,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.8, y: 1.2}
-    newSize: {x: 0.6666667, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8, y: 1.2}
-  m_EdgeRadius: 0
+  m_Radius: 0.4
 --- !u!1 &1868093251
 GameObject:
   m_ObjectHideFlags: 0
@@ -1515,6 +1553,10 @@ MonoBehaviour:
   timer: 0
   p1Finished: 0
   p2Finished: 0
+  p1End: -1
+  p2End: -1
+  winner: 0
+  record: 
 --- !u!4 &2117668930
 Transform:
   m_ObjectHideFlags: 0

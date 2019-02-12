@@ -35,6 +35,17 @@ public class Player : MonoBehaviour
     [Header("Sprites")]
     public SkiSprite[] skiSprites;
 
+    [Header("Bad variables")]
+    public float fallTime;
+    public float fallDuration;
+    public bool fallNum;
+
+    public int misses = 0;
+    int spriteCounter = 0;
+    int changeCount = 5;
+
+    public bool finished;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,6 +76,12 @@ public class Player : MonoBehaviour
     {
         switch(state)
         {
+            case State.FALL:
+                if(Time.time > fallTime + fallDuration)
+                {
+                    state = State.SKI;
+                }
+                break;
             case State.HORIZONTAL:
                 if(crossSkiing == false)
                 {
@@ -187,22 +204,22 @@ public class Player : MonoBehaviour
                     {
                         if (Input.GetKey(right) && !Input.GetKey(left))
                         {
-                            rb.MovePosition(transform.position + new Vector3(speed * horizontalMultiplier * Time.deltaTime, -speed * Time.deltaTime));
+                            rb.MovePosition(transform.position + new Vector3(speed  * Time.deltaTime * 1.5f, -speed * Time.deltaTime));
                         }
                         else
                         {
-                            rb.MovePosition(transform.position + new Vector3(speed * horizontalMultiplier * Time.deltaTime * horizontalMultiplier, -speed * Time.deltaTime));
+                            rb.MovePosition(transform.position + new Vector3(speed * horizontalMultiplier * Time.deltaTime , -speed * Time.deltaTime));
                         }
                     }
                     else if (angle == -1)
                     {
                         if (Input.GetKey(left) && !Input.GetKey(right))
                         {
-                            rb.MovePosition(transform.position + new Vector3(-1 * speed * horizontalMultiplier * Time.deltaTime, -speed * Time.deltaTime));
+                            rb.MovePosition(transform.position + new Vector3(-1 * speed  * Time.deltaTime * 1.5f, -speed * Time.deltaTime));
                         }
                         else
                         {
-                            rb.MovePosition(transform.position + new Vector3(-1 * speed * horizontalMultiplier * Time.deltaTime * horizontalMultiplier, -speed * Time.deltaTime));
+                            rb.MovePosition(transform.position + new Vector3(-1 * speed * horizontalMultiplier * Time.deltaTime , -speed * Time.deltaTime));
                         }
                     }
                     break;
@@ -224,97 +241,131 @@ public class Player : MonoBehaviour
 
     public void SpriteUpdate()
     {
-        if(!skiinng)
+        if (state == State.FALL)
         {
-            if (crossSkiing)
+            if (fallNum)
             {
-                switch (direction)
+                spriteRenderer.sprite = GetSprite("Fall2");
+            }
+            else
+            {
+                spriteRenderer.sprite = GetSprite("Fall1");
+            }
+        }
+        else
+        {
+            if (!skiinng)
+            {
+                if (crossSkiing)
                 {
-                    case Direction.RIGHT:
-                        spriteRenderer.sprite = GetSprite("CrossHillRight");
-                        break;
-                    case Direction.LEFT:
-                        spriteRenderer.sprite = GetSprite("CrossHillLeft");
-                        break;
+                    switch (direction)
+                    {
+                        case Direction.RIGHT:
+                            spriteRenderer.sprite = GetSprite("CrossHillRight");
+                            break;
+                        case Direction.LEFT:
+                            spriteRenderer.sprite = GetSprite("CrossHillLeft");
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (direction)
+                    {
+                        case Direction.RIGHT:
+                            spriteRenderer.sprite = GetSprite("Idle");
+                            break;
+                        case Direction.LEFT:
+                            spriteRenderer.sprite = GetSprite("Idle");
+                            break;
+                    }
                 }
             }
             else
             {
-                switch (direction)
+                if (bombing)
                 {
-                    case Direction.RIGHT:
-                        spriteRenderer.sprite = GetSprite("Idle");
-                        break;
-                    case Direction.LEFT:
-                        spriteRenderer.sprite = GetSprite("Idle");
-                        break;
+                    spriteRenderer.sprite = GetSprite("SkiDown");
+                }
+                else if (angle == 1)
+                {
+                    if(spriteRenderer.sprite == GetSprite("SkiLeft") || spriteRenderer.sprite == GetSprite("SkiDownLeft"))
+                    {
+                        spriteCounter = 0;
+                        spriteRenderer.sprite = GetSprite("SkiDown");
+                    }
+                    else if (spriteCounter < changeCount)
+                    {
+                        spriteCounter++;
+                        spriteRenderer.sprite = GetSprite("SkiDown");
+                    }
+                    else if (Input.GetKey(right) && !Input.GetKey(left))
+                    {
+                        spriteRenderer.sprite = GetSprite("SkiRight");
+                    }
+                    else
+                    {
+                        spriteRenderer.sprite = GetSprite("SkiDownRight");
+                    }
+                }
+                else if (angle == -1)
+                {
+                    if (spriteRenderer.sprite == GetSprite("SkiRight") || spriteRenderer.sprite == GetSprite("SkiDownRight"))
+                    {
+                        spriteCounter = 0;
+                        spriteRenderer.sprite = GetSprite("SkiDown");
+                    }
+                    else if(spriteCounter < changeCount)
+                    {
+                        spriteCounter++;
+                        spriteRenderer.sprite = GetSprite("SkiDown");
+                    }
+                    else if (Input.GetKey(left) && !Input.GetKey(right))
+                    {
+                        spriteRenderer.sprite = GetSprite("SkiLeft");
+                    }
+                    else
+                    {
+                        spriteRenderer.sprite = GetSprite("SkiDownLeft");
+                    }
                 }
             }
-        }
-        else
-        {
-            if(bombing)
-            {
-                spriteRenderer.sprite = GetSprite("SkiDown");
-            }
-            else if(angle == 1)
-            {
-                if(Input.GetKey(right) && !Input.GetKey(left))
-                {
-                    spriteRenderer.sprite = GetSprite("SkiRight");
-                }
-                else
-                {
-                    spriteRenderer.sprite = GetSprite("SkiDownRight");
-                }
-            }
-            else if (angle == -1)
-            {
-                if (Input.GetKey(left) && !Input.GetKey(right))
-                {
-                    spriteRenderer.sprite = GetSprite("SkiLeft");
-                }
-                else
-                {
-                    spriteRenderer.sprite = GetSprite("SkiDownLeft");
-                }
-            }
-        }
 
-        if(stopping)
-        {
-            if(direction == Direction.LEFT)
+            if (stopping)
             {
-                spriteRenderer.sprite = GetSprite("CrossHillLeft");
+                if (direction == Direction.LEFT)
+                {
+                    spriteRenderer.sprite = GetSprite("CrossHillLeft");
+                }
+                else if (direction == Direction.RIGHT)
+                {
+                    spriteRenderer.sprite = GetSprite("CrossHillRight");
+                }
             }
-            else if(direction == Direction.RIGHT)
+
+            if (!skiinng && !crossSkiing)
             {
-                spriteRenderer.sprite = GetSprite("CrossHillRight");
+                spriteRenderer.sprite = GetSprite("Idle");
             }
-        }
+            if (state == State.WAIT)
+            {
+                spriteRenderer.sprite = GetSprite("Wait");
+            }
 
-        if(!skiinng && !crossSkiing)
-        {
-            spriteRenderer.sprite = GetSprite("Idle");
-        }
-        if(state == State.WAIT)
-        {
-            spriteRenderer.sprite = GetSprite("Wait");
-        }
-
-        if(spriteRenderer.sprite == GetSprite("Idle") && direction == Direction.LEFT)
-        {
-            transform.localScale = new Vector3(-1, 1);
-        }
-        else
-        {
-            transform.localScale = new Vector3(1, 1);
+            if (spriteRenderer.sprite == GetSprite("Idle") && direction == Direction.LEFT)
+            {
+                transform.localScale = new Vector3(-1, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector3(1, 1);
+            }
         }
     }
 
     public enum Controls { P1, P2, CUSTOM };
     public enum Direction { LEFT, RIGHT };
-    public enum State { HORIZONTAL, WAIT, SKI, FINISH};
+    public enum State { HORIZONTAL, WAIT, SKI, FINISH, FALL};
 
     public Sprite GetSprite(string n)
     {
@@ -326,6 +377,38 @@ public class Player : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.gameObject.layer == 11)
+        {
+            state = State.FALL;
+            fallTime = Time.time;
+            if(collision.contacts[0].normal.y > 0.5)
+            {
+                fallNum = false;
+            }
+            else
+            {
+                fallNum = true;
+            }
+
+            if(collision.gameObject.transform.position.x < transform.position.x)
+            {
+                Debug.Log(new Vector3(collision.gameObject.transform.position.x - 0.9f, transform.position.y));
+                transform.position = new Vector3(collision.gameObject.transform.position.x - 0.9f, transform.position.y);
+            }
+            else
+            {
+                transform.position = new Vector3(collision.gameObject.transform.position.x + 0.9f, transform.position.y);
+            }
+        }
+    }
+
+    public void Miss()
+    {
+        misses++;
     }
 }
 
